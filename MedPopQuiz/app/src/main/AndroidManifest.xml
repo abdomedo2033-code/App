@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+
+    <application
+        android:name=".MedPopQuizApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MedPopQuiz"
+        tools:targetApi="31">
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Popup Activity - Shows on unlock -->
+        <activity
+            android:name=".ui.popup.QuizPopupActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:theme="@style/Theme.MedPopQuiz.Popup"
+            android:turnScreenOn="true" />
+
+        <!-- Term Management Activity -->
+        <activity
+            android:name=".ui.terms.TermListActivity"
+            android:exported="false"
+            android:label="@string/manage_terms"
+            android:parentActivityName=".ui.main.MainActivity" />
+
+        <!-- Add/Edit Term Activity -->
+        <activity
+            android:name=".ui.terms.AddEditTermActivity"
+            android:exported="false"
+            android:label="@string/add_term"
+            android:parentActivityName=".ui.terms.TermListActivity" />
+
+        <!-- Statistics Activity -->
+        <activity
+            android:name=".ui.stats.StatisticsActivity"
+            android:exported="false"
+            android:label="@string/statistics"
+            android:parentActivityName=".ui.main.MainActivity" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false"
+            android:label="@string/settings"
+            android:parentActivityName=".ui.main.MainActivity" />
+
+        <!-- Category Management Activity -->
+        <activity
+            android:name=".ui.categories.CategoryListActivity"
+            android:exported="false"
+            android:label="@string/categories"
+            android:parentActivityName=".ui.main.MainActivity" />
+
+        <!-- Screen Unlock Receiver -->
+        <receiver
+            android:name=".receiver.ScreenUnlockReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Boot Receiver -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Foreground Service for persistent popup monitoring -->
+        <service
+            android:name=".service.PopupMonitorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse" />
+
+        <!-- Daily Review Worker -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
+    </application>
+
+</manifest>
